@@ -1,6 +1,8 @@
 import { useState } from "react";
 
-function Login() {
+function Signup() {
+    const [firstname, setFirstName] = useState("");
+    const [lastname, setLastName] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
@@ -12,18 +14,25 @@ function Login() {
         setMessage("");
 
         try {
-            const response = await fetch("http://localhost:9000/login",
+            const response = await fetch("http://localhost:9000/signup",
             {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ username, password })
+                body: JSON.stringify({
+                    f_name: firstname,
+                    l_name: lastname,
+                    username: username,
+                    password: password
+                })
             });
 
             const data = await response.json();
 
             if (response.ok) {
+                setFirstName("");
+                setLastName("");
                 setUsername("");
                 setPassword("");
                 setMessage(data.message);
@@ -34,16 +43,37 @@ function Login() {
         } catch (error) {
             console.error(error);
             setError(true);
-            setMessage("Could not connect to the server");
+            setMessage("Could not connect to the server.");
         }
     }
+
     return (
         <div>
-            <div className="login-heading">
-                <h2>Log In</h2>
+            <div className="signup-heading">
+                <h2>Create Account</h2>
             </div>
 
             <form onSubmit={handleSubmit}>
+                <div>
+                    <input 
+                        type="text"
+                        name="firstName"
+                        placeholder="First Name"
+                        value={firstname}
+                        onChange={(event) => setFirstName(event.target.value)}
+                    />
+                </div>
+
+                <div>
+                    <input 
+                        type="text"
+                        name="lastName"
+                        placeholder="Last Name"
+                        value={lastname}
+                        onChange={(event) => setLastName(event.target.value)}
+                    />
+                </div>
+
                 <div>
                     <input 
                         type="text"
@@ -63,11 +93,11 @@ function Login() {
                         onChange={(event) => setPassword(event.target.value)}
                     />
                 </div>
-                <button type="submit">Login</button>
-                {message && <p  className={error ? "error" : "success"}>{message}</p>}
+                <button type="submit">Create Account</button>
             </form>
+            {message && <p  className={error ? "error" : "success"}>{message}</p>}
         </div>
     );
 }
 
-export default Login;
+export default Signup;
